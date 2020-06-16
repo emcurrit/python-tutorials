@@ -60,6 +60,23 @@ def save_file(path, filename, book_stuff):
         json.dump(book_stuff, f)
     
 
+# make it update the current page and recalculate the pages you have to read every day
+# date.fromisoformat to change back to datetime
+def update_page(reading_list):
+    for i, book in enumerate(reading_list):
+        print(f"{i + 1} {book[0]}")
+    id = int(input("What book do you want to update? Enter the number of the book: "))
+    current_page = int(input("What page are you on in this book? "))
+    reading_list[id-1][6] = current_page
+    today = date.today()
+    end_date = date.fromisoformat(reading_list[id-1][4])
+    td = end_date - today
+    pages_left = reading_list[id-1][2] - current_page
+    pages_per_day = round(pages_left / td.days, 2)
+    reading_list[id-1][5] = pages_per_day
+    print(f'To read {reading_list[id-1][0]} by {reading_list[id-1][4]}, you need to read {reading_list[id-1][5]} pages every day!')
+
+
 def main():
 
     path = "./files/my_folder"
@@ -79,9 +96,7 @@ To exit, press x. """)
         elif user_input == "r":    
             book_stuff["reading_list"].append(read_book(book_stuff["book_list"]))
         elif user_input == "p":
-            pass
-        # make it update the current page and recalculate the pages you have to read every day
-        # date.fromisoformat to change back to datetime
+            update_page(book_stuff["reading_list"])
         elif user_input == "x":
             save_file(path, filename, book_stuff)
             break
